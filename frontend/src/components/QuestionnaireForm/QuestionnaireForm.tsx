@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Checkbox,
+  Stack,
   Container,
   FormControlLabel,
   TextField,
@@ -10,7 +11,7 @@ import {
 } from "@mui/material";
 
 import { SectionPage } from "../SectionPage";
-import { Question } from "./";
+import { Question, Header } from "./";
 import { SectionData, Answer } from "sections";
 
 const sortAnswers = (a: Answer, b: Answer) => {
@@ -27,16 +28,18 @@ const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({
   sectionData,
   children,
 }) => {
-  const questions = sectionData?.questions;
-
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    console.log("todo");
     // TODO: send data
   };
+
+  //   get all questions
+  const questions = sectionData?.questions;
+  //   get first question answers
   const firstQuestion = questions[Object.keys(questions)[0]];
-  const answersToSort = firstQuestion?.answers;
-  answersToSort.sort(sortAnswers);
-  //   TODO: add header answers
+  //   sort answers by score
+  const sortedAnswers = firstQuestion?.answers.sort(sortAnswers);
 
   return (
     <Container component="main">
@@ -55,44 +58,26 @@ const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({
           noValidate
           sx={{ mt: 1, width: "100%" }}
         >
+          <Header answers={sortedAnswers}></Header>
           {Object.keys(questions).map((questionID) => {
             const question = questions[questionID];
             return (
               <Question
                 key={questionID}
                 content={question.content}
-                answers={question.answers}
+                answers={sortedAnswers}
               ></Question>
             );
           })}
-          {/* <TextField
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
-            autoFocus
-          />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-          />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-          >
-            Sign In
-          </Button> */}
+          <Stack width="100%">
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{ mt: 3, mb: 2, ml: "auto" }}
+            >
+              Continue
+            </Button>
+          </Stack>
         </Box>
       </Box>
     </Container>

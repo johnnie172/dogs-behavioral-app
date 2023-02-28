@@ -17,6 +17,7 @@ const Question: React.FC<QuestionProps> = ({ content, answers }) => {
   const [checked, setChecked] = React.useState<QuestionValue | undefined>(
     undefined
   );
+  const size = `${100 / answers.length}%`;
 
   return (
     <Stack direction="row">
@@ -34,6 +35,7 @@ const Question: React.FC<QuestionProps> = ({ content, answers }) => {
           const score = answer.score;
           return (
             <Checkbox
+              sx={{ width: size }}
               key={answer.id}
               onClick={() => {
                 checked?.score === score
