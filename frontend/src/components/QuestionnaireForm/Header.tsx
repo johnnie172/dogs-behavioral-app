@@ -9,7 +9,7 @@ interface HeaderProps {
 
 const StyledBox = styled(Box)(() => ({
   width: "50%",
-  marginLeft: "auto",
+  marginRight: "auto",
   display: "flex",
   flexDirection: "row",
 }));

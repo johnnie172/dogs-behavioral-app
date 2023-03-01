@@ -21,9 +21,6 @@ const Question: React.FC<QuestionProps> = ({ content, answers }) => {
 
   return (
     <Stack direction="row">
-      <Box width={"50%"}>
-        <Typography textAlign="left">{content}</Typography>
-      </Box>
       <Grid
         container
         direction="row"
@@ -47,6 +44,9 @@ const Question: React.FC<QuestionProps> = ({ content, answers }) => {
           );
         })}
       </Grid>
+      <Box width="50%" margin="auto">
+        <Typography textAlign="right">{content}</Typography>
+      </Box>
     </Stack>
   );
 };
