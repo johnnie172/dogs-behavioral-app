@@ -3,11 +3,11 @@ import os
 import sys
 # TODO: fix relative paths
 sys.path.insert(0, os.path.dirname(__file__))
-import logging
-from PsycopgConnection import PsycopgConnection
-from dotenv import load_dotenv
-from pydantic import BaseModel
 from typing import Optional
+from pydantic import BaseModel
+from dotenv import load_dotenv
+from PsycopgConnection import PsycopgConnection
+import logging
 
 
 class DogAnswer(BaseModel):
@@ -157,8 +157,11 @@ class DBToApi:
         return {"section": section_dict, "questions": questions}
 
     def create_dog_answer(self, dog_id: int, question_id: int, answer_id: int) -> tuple[str, DogAnswer]:
-        cmd = "insert into dog_questionnaires (dog_id, question_id, answer_id) values (%s, %s, %s)"
-        return cmd, (dog_id, question_id, answer_id)
+        cmd = """
+                insert into dog_questionnaires (dog_id, question_id, answer_id) values (%s, %s, %s)
+                ON CONFLICT (id) DO UPDATE SET answer_id = %s;
+                """
+        return cmd, (dog_id, question_id, answer_id, answer_id)
 
     def put_dogs_answers(self, dog_id: int, answers: list[dict]) -> None:
         """Handle the client answers from api to sql"""
