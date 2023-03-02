@@ -1,18 +1,31 @@
-import React from 'react'
-import { Section } from "sections"
-import { Box, Container, Typography } from '@mui/material';
+import React from "react";
+import { Box, Container } from "@mui/material";
+import { SectionData } from "sections";
+import { SectionDetails } from "./";
+import { QuestionnaireForm } from "../QuestionnaireForm";
+import { useAxiosFetch } from "../../hooks";
+
 interface SectionPageProps {
-  section: Section
-  children?: React.ReactNode;
+  sectionApi: string;
 }
 
-const SectionPage: React.FC<SectionPageProps> = ({ children, section }) => {
+const SectionPage:React.FC<SectionPageProps> = ({sectionApi}) => {
+  const { data, loading, error } = useAxiosFetch<SectionData>({
+    api: sectionApi,
+    withCredentials: false,
+  });
   return (
-    <Box sx={{width: "100%", height:"100%"}}>
-      <Typography variant="h3" > {section.title} </Typography>
-      <Typography variant="body1" > {section.description} </Typography>
-    </Box>
-  )
-}
+    <Box sx={{ width: "100%", height: "100%" }}>
+      {loading && "Loading"}
 
-export default SectionPage
+      {data && (
+        <Container>
+          <SectionDetails section={data?.section}></SectionDetails>
+          <QuestionnaireForm sectionData={data} />
+        </Container>
+      )}
+    </Box>
+  );
+};
+
+export default SectionPage;

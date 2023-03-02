@@ -12,7 +12,7 @@ from typing import Optional
 
 class DogAnswer(BaseModel):
     question_id: int
-    answer_score: int
+    answer_id: int
 
 
 class Section(BaseModel):
@@ -156,9 +156,9 @@ class DBToApi:
         # return questions with answers dictionary
         return {"section": section_dict, "questions": questions}
 
-    def create_dog_answer(self, dog_id: int, question_id: int, answer_score: int) -> tuple[str, DogAnswer]:
-        cmd = "insert into dog_questionnaires (dog_id, question_id, answer_score) values (%s, %s, %s)"
-        return cmd, (dog_id, question_id, answer_score)
+    def create_dog_answer(self, dog_id: int, question_id: int, answer_id: int) -> tuple[str, DogAnswer]:
+        cmd = "insert into dog_questionnaires (dog_id, question_id, answer_id) values (%s, %s, %s)"
+        return cmd, (dog_id, question_id, answer_id)
 
     def put_dogs_answers(self, dog_id: int, answers: list[dict]) -> None:
         """Handle the client answers from api to sql"""
@@ -170,11 +170,11 @@ class DBToApi:
 
             # create answer for db
             question_id = answer.get("question_id")
-            answer_score = answer.get("answer_score")
+            answer_id = answer.get("answer_id")
 
             # add the answer to the list
             dog_answer = self.create_dog_answer(
-                dog_id, question_id, answer_score)
+                dog_id, question_id, answer_id)
             answers_to_sql.append(dog_answer)
 
         # execute all the answers throw psycopg

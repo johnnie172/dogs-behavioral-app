@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS dog_questionnaires (
     id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     dog_id integer NOT NULL,
     question_id integer NOT NULL,
-    answer_score integer
+    answer_id integer
 );
 
 CREATE TABLE IF NOT EXISTS sections (

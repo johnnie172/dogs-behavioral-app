@@ -1,21 +1,36 @@
-import { SectionData } from 'sections';
-import './App.css'
-import { QuestionnaireForm } from './components/QuestionnaireForm'
-import { SECTION_ENDPOINT } from './consts';
-import { useAxiosFetch } from './hooks';
+import { useState, useEffect } from "react";
+import { SectionsData } from "sections";
+import "./App.css";
+import { SECTIONS_ENDPOINT, SECTION_ENDPOINT } from "./consts";
+import { useAxiosFetch } from "./hooks";
+
+import { SectionPage } from "./components/SectionPage";
 
 function App() {
-  const { data, loading, error } = useAxiosFetch<SectionData>({
-    api: `${SECTION_ENDPOINT}${"1"}`,
+  const {
+    data: sectionsData,
+    loading,
+    error,
+  } = useAxiosFetch<SectionsData>({
+    api: SECTIONS_ENDPOINT,
     withCredentials: false,
   });
+  const [sectionId, setSectionId] = useState<number | undefined>(undefined);
+  useEffect(() => {
+    if (!sectionsData) return;
 
+    // TODO: change the id with context
+    setSectionId(sectionsData.sections[0]);
+  }, [sectionsData]);
+
+  const sectionApi = sectionId ? `${SECTION_ENDPOINT}${sectionId}` : null;
   return (
     <div className="App">
-      {loading && "Loading"}
-      {data && <QuestionnaireForm sectionData={data}/>}
+      {sectionApi && sectionId && (
+        <SectionPage sectionApi={sectionApi}></SectionPage>
+      )}
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
