@@ -20,11 +20,23 @@ CREATE TABLE IF NOT EXISTS questions (
 );
 
 CREATE TABLE IF NOT EXISTS dog_questionnaires (
-    id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id VARCHAR NOT NULL PRIMARY KEY,
     dog_id integer NOT NULL,
     question_id integer NOT NULL,
-    answer_score integer
+    answer_id integer
 );
+
+CREATE OR REPLACE FUNCTION generate_primary_key() RETURNS TRIGGER AS $$
+BEGIN
+  NEW.id := NEW.dog_id || '-' || NEW.question_id;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER dog_questionnaires_trigger
+BEFORE INSERT ON dog_questionnaires
+FOR EACH ROW
+EXECUTE FUNCTION generate_primary_key();
 
 CREATE TABLE IF NOT EXISTS sections (
     id integer NOT NULL PRIMARY KEY,
