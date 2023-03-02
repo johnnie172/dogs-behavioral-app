@@ -8,10 +8,9 @@ from fastapi import FastAPI, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from data_base.DBToApi import DBToApi
 
-
 class DogAnswer(BaseModel):
     question_id: int
-    answer_score: int
+    answer_id: int
 
 
 class DogAnswers(BaseModel):

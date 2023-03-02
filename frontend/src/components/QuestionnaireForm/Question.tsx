@@ -6,11 +6,9 @@ interface QuestionProps {
   answers: Answer[];
 }
 
-type Score = number | null;
-
 interface QuestionValue {
-  question: Answer["question_id"];
-  score: Score;
+  question_id: Answer["question_id"];
+  answer_id: Answer["id"];
 }
 
 const Question: React.FC<QuestionProps> = ({ content, answers }) => {
@@ -21,6 +19,9 @@ const Question: React.FC<QuestionProps> = ({ content, answers }) => {
 
   return (
     <Stack direction="row">
+      <Box width="50%" margin="auto">
+        <Typography>{content}</Typography>
+      </Box>
       <Grid
         container
         direction="row"
@@ -29,24 +30,30 @@ const Question: React.FC<QuestionProps> = ({ content, answers }) => {
         width={"50%"}
       >
         {answers.map((answer) => {
-          const score = answer.score;
+          const answer_id = answer.id;
+          const name = {
+            question_id: answer.question_id,
+            answer_id: answer_id,
+          };
           return (
             <Checkbox
+              name={JSON.stringify(name)}
+              value={checked?.answer_id === answer_id}
               sx={{ width: size }}
-              key={answer.id}
+              key={answer_id}
               onClick={() => {
-                checked?.score === score
+                checked?.answer_id === answer_id
                   ? setChecked(undefined)
-                  : setChecked({ score: score, question: answer.question_id });
+                  : setChecked({
+                      answer_id: answer_id,
+                      question_id: answer.question_id,
+                    });
               }}
-              checked={checked?.score === score}
+              checked={checked?.answer_id === answer_id}
             ></Checkbox>
           );
         })}
       </Grid>
-      <Box width="50%" margin="auto">
-        <Typography textAlign="right">{content}</Typography>
-      </Box>
     </Stack>
   );
 };

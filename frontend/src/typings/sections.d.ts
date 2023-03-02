@@ -27,3 +27,7 @@ export interface Section {
     section: Section;
     questions: { [key: string]: QuestionsAnswers; }
   }
+
+  export interface SectionsData {
+    sections: number[];
+  }

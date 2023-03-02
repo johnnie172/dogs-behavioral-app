@@ -19,14 +19,14 @@ class DogAnswer:
     answer_id: int
 
 
-def csv_to_postgres(file_path: str, *, table_name: str | None = None) -> None:
+def csv_to_postgres(psyco: PsycopgConnection, file_path: str, *, table_name: str | None = None) -> None:
     """Read csv file and insert to postgres database table"""
     # set table name from file name or argument
     table_name = table_name if table_name else parse_file_name_from_path(
         path=file_path, file_type=".csv")
 
     # use cursor
-    with PsycopgConnection().get_cursor() as cursor:
+    with psyco.get_cursor() as cursor:
 
         # open csv and skip header line
         with open(file_path, ) as csv_file:
@@ -36,21 +36,21 @@ def csv_to_postgres(file_path: str, *, table_name: str | None = None) -> None:
             cursor.copy_from(csv_file, table_name, sep=',', null="null")
 
 
-def create_tables_from_file(file_path: str) -> None:
+def create_tables_from_file(psyco: PsycopgConnection, file_path: str) -> None:
     """Create tables from sql file"""
     # execute create tables file
     with open(file_path) as file:
-        PsycopgConnection().execute_command(file.read())
+        psyco.execute_command(file.read())
 
 
-def drop_table(table_name: str) -> None:
+def drop_table(psyco: PsycopgConnection, table_name: str) -> None:
     """Drop table with specified name"""
-    PsycopgConnection().execute_command(f"DROP TABLE IF EXISTS {table_name}")
+    psyco.execute_command(f"DROP TABLE IF EXISTS {table_name}")
 
 
-def delete_table_data(table_name: str) -> None:
+def delete_table_data(psyco: PsycopgConnection, table_name: str) -> None:
     """Delete all rows from table"""
-    PsycopgConnection().execute_command(f"DELETE FROM {table_name};")
+    psyco.execute_command(f"DELETE FROM {table_name};")
 
 
 def update_tables_from_csv_directory(csv_files: list[str]) -> None:
@@ -112,7 +112,7 @@ def main() -> None:
 
 
     # get dict from query
-    # psyco = PsycopgConnection()
+    psyco = PsycopgConnection(os.environ.get("DB_URL"))
     # with psyco.get_cursor() as cursor:
     #     cursor.execute("select * from sections")
     #     print(psyco.get_dict(cursor))
@@ -127,9 +127,9 @@ def main() -> None:
     #     print(cursor.fetchall())
     # insert from csv
     # csv_file_path = get_abs_path("./csv_files/questions.csv")
-    # drop_table("dog_questionnaires")
+    # drop_table(psyco, "dog_questionnaires")
 
-    # create_tables_from_file(get_abs_path("./create_tables.sql"))
+    # create_tables_from_file(psyco, get_abs_path("./create_tables.sql"))
 
     # csv_to_postgres(csv_file_path)
 
