@@ -1,12 +1,6 @@
-import React, { useState, useEffect } from "react";
-import {
-  Box,
-  Button,
-  Stack,
-  Container,
-} from "@mui/material";
+import React, { useRef } from "react";
+import { Box, Button, Stack, Container } from "@mui/material";
 
-import { SectionPage } from "../SectionPage";
 import { Question, Header } from "./";
 import { SectionData, Answer } from "sections";
 
@@ -16,10 +10,10 @@ const sortAnswers = (a: Answer, b: Answer) => {
   return a.score < b.score ? -1 : 1;
 };
 
-interface ElementName {
-  question_id: number;
-  answer_id: number;
-}
+// interface ElementName {
+//   question_id: number;
+//   answer_id: number;
+// }
 
 interface QuestionnaireFormProps {
   sectionData: SectionData;
@@ -29,24 +23,29 @@ const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({
   sectionData,
   children,
 }) => {
+  const answersRef = useRef<{ [key: string]: number }>({});
+
+  //   get all questions and the amounts of questions
+  const questions = sectionData?.questions;
+  const questionsLen = Object.keys(questions).length;
+
+  //   //   get first question answers
+  const firstQuestion = questions[Object.keys(questions)[0]];
+
+  //   //   sort answers by score
+  //   const sortedAnswers = firstQuestion?.answers.sort(sortAnswers);
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
     // create answers array for all the answers ids that were checked
-    const answers: ElementName[] = Object.values(event?.target)
-      .filter((el) => el.value === "true")
-      .map((el) => JSON.parse(el.name));
-    console.log(answers);
+    // const answers: ElementName[] = Object.values(event?.target)
+    //   .filter((el) => el.value === "true")
+    //   .map((el) => JSON.parse(el.name));
+    console.log(questionsLen === Object.keys(answersRef?.current).length);
+    console.log(answersRef?.current);
 
     // TODO: send data
   };
-  //   get all questions
-  const questions = sectionData?.questions;
-  //   //   get first question answers
-  const firstQuestion = questions[Object.keys(questions)[0]];
-  //   //   sort answers by score
-  //   //   TODO: sort on the backend or sort each question
-  //   const sortedAnswers = firstQuestion?.answers.sort(sortAnswers);
 
   return (
     <Container component="main">
@@ -58,13 +57,17 @@ const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({
           alignItems: "center",
         }}
       >
+        {/* form */}
         <Box
           component="form"
           onSubmit={handleSubmit}
           noValidate
           sx={{ mt: 1, width: "100%" }}
         >
-          <Header answers={firstQuestion?.answers}/>
+          {/* answers header */}
+          <Header answers={firstQuestion?.answers} />
+
+          {/* questions */}
           {Object.keys(questions).map((questionID) => {
             const question = questions[questionID];
             return (
@@ -72,9 +75,12 @@ const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({
                 key={questionID}
                 content={question.content}
                 answers={question.answers}
+                answersRef={answersRef}
               ></Question>
             );
           })}
+
+          {/* form bottom section (submit/next/prev)  */}
           <Stack width="100%">
             <Button
               type="submit"
