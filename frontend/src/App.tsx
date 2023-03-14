@@ -3,9 +3,10 @@ import "./App.css";
 import { getSections } from "./services/questionService";
 import { SectionPage } from "./components/SectionPage";
 import { useGetData } from "./hooks";
+import FetchComponent from "./components/FetchComponent/FetchComponent";
 
 function App() {
-  const { data: sectionsData, loading } = useGetData(getSections);
+  const { data: sectionsData, loading, error } = useGetData(getSections);
 
   const [sectionId, setSectionId] = useState<number | undefined>(undefined);
   useEffect(() => {
@@ -15,8 +16,11 @@ function App() {
 
   return (
     <div className="App">
-      {sectionId && <SectionPage sectionId={sectionId}></SectionPage>}
-      {loading && <h1>loading...</h1>}
+      {
+        <FetchComponent loading={loading} error={error}>
+          {sectionId && <SectionPage sectionId={sectionId}></SectionPage>}
+        </FetchComponent>
+      }
     </div>
   );
 }
