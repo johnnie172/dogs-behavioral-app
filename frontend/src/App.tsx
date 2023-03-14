@@ -1,34 +1,22 @@
 import { useState, useEffect } from "react";
-import { SectionsData } from "sections";
 import "./App.css";
-import { SECTIONS_ENDPOINT, SECTION_ENDPOINT } from "./consts";
-import { useAxiosFetch } from "./hooks";
-
+import { getSections } from "./services/questionService";
 import { SectionPage } from "./components/SectionPage";
+import { useGetData } from "./hooks";
 
 function App() {
-  const {
-    data: sectionsData,
-    loading,
-    error,
-  } = useAxiosFetch<SectionsData>({
-    api: SECTIONS_ENDPOINT,
-    withCredentials: false,
-  });
+  const { data: sectionsData, loading } = useGetData(getSections);
+
   const [sectionId, setSectionId] = useState<number | undefined>(undefined);
   useEffect(() => {
-    if (!sectionsData) return;
-
     // TODO: change the id with context
-    setSectionId(sectionsData.sections[0]);
+    sectionsData?.sections && setSectionId(sectionsData.sections[0]);
   }, [sectionsData]);
 
-  const sectionApi = sectionId ? `${SECTION_ENDPOINT}${sectionId}` : null;
   return (
     <div className="App">
-      {sectionApi && sectionId && (
-        <SectionPage sectionApi={sectionApi}></SectionPage>
-      )}
+      {sectionId && <SectionPage sectionId={sectionId}></SectionPage>}
+      {loading && <h1>loading...</h1>}
     </div>
   );
 }

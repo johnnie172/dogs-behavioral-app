@@ -3,17 +3,15 @@ import { Box, Container } from "@mui/material";
 import { SectionData } from "sections";
 import { SectionDetails } from "./";
 import { QuestionnaireForm } from "../QuestionnaireForm";
-import { useAxiosFetch } from "../../hooks";
+import { useGetData } from "../../hooks";
+import { getSectionById } from "../../services/questionService";
 
 interface SectionPageProps {
-  sectionApi: string;
+  sectionId: number;
 }
 
-const SectionPage:React.FC<SectionPageProps> = ({sectionApi}) => {
-  const { data, loading, error } = useAxiosFetch<SectionData>({
-    api: sectionApi,
-    withCredentials: false,
-  });
+const SectionPage: React.FC<SectionPageProps> = ({ sectionId }) => {
+  const { data, loading } = useGetData(() => getSectionById(sectionId));
   return (
     <Box sx={{ width: "100%", height: "100%" }}>
       {loading && "Loading"}

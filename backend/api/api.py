@@ -49,7 +49,6 @@ def root():
 @app.get("/sections", status_code=200)
 def get_sections(response: Response):
     """Get all sections from the database"""
-
     sections = db_connector.get_sections_ids()
     if not len(sections):
         response.status_code = status.HTTP_404_NOT_FOUND
@@ -63,7 +62,7 @@ def get_section(section_id: int):
         section_id)
     return section_with_questions
 
-
+# TODO: needs to check if the dog owner is the user that sent the request
 @app.post("/answers/{user_id}/{dog_id}")
 def handle_user_answers(user_id: int, dog_id: int, dogAnswers: DogAnswers):
     req = dogAnswers.dict()
