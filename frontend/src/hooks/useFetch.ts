@@ -1,7 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 
-const useGetData = <T extends unknown>(
-  getFunc: () => Promise<T>,
+const useFetch = <T extends unknown>(
+  fetchFunc: () => Promise<T>,
+  toFetch?: boolean,
   timeOut = 5000
 ) => {
   // TODO: reset, error, cleanup
@@ -9,11 +10,12 @@ const useGetData = <T extends unknown>(
   const [data, setData] = useState<T | undefined>();
   const [error, setError] = useState("");
   const [toRetry, setToRetry] = useState(false);
+  const [shouldFetch, setShouldFetch] = useState(toFetch ?? true);
   const isMounted = useRef(true);
 
-  const get = async () => {
+  const fetch = async () => {
     try {
-      const data = await getFunc();
+      const data = await fetchFunc();
       if (isMounted.current) {
         // response handling
         setLoading(false);
@@ -24,7 +26,7 @@ const useGetData = <T extends unknown>(
       setLoading(false);
       setToRetry(true);
       // TODO: find a better way to type
-      console.log(error);
+      console.error(error);
       if (error instanceof Error) setError(error.message);
     }
   };
@@ -35,8 +37,8 @@ const useGetData = <T extends unknown>(
       if (toRetry) setToRetry(false);
     }, timeOut);
 
-    // call get function
-    get();
+    // call fetch function
+    if (shouldFetch) fetch();
 
     // TODO: add cancel
     // Clean up
@@ -48,9 +50,9 @@ const useGetData = <T extends unknown>(
       //   clear retry timer
       clearTimeout(timer);
     };
-  }, [toRetry]);
+  }, [toRetry, shouldFetch]);
 
-  return { data, loading, error };
+  return { data, loading, error, setShouldFetch };
 };
 
-export default useGetData;
+export default useFetch;

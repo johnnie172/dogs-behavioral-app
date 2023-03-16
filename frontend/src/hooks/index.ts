@@ -1,3 +1,3 @@
 export { default as useLocalStorage } from "./useLocalStorage";
 export { default as useAxiosFetch } from "./useAxiosFetch";
-export { default as useGetData } from "./useGetData";
+export { default as useFetch } from "./useFetch";

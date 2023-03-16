@@ -63,10 +63,11 @@ def get_section(section_id: int):
     return section_with_questions
 
 # TODO: needs to check if the dog owner is the user that sent the request
-@app.post("/answers/{user_id}/{dog_id}")
+@app.post("/answers/{user_id}/{dog_id}", status_code=201)
 def handle_user_answers(user_id: int, dog_id: int, dogAnswers: DogAnswers):
     req = dogAnswers.dict()
     db_connector.put_dogs_answers(dog_id, req.get("answers", []))
+    return {"message": "answers inserted"}
 
 
 def main():

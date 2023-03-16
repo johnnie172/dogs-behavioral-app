@@ -2,11 +2,12 @@ import { useState, useEffect } from "react";
 import "./App.css";
 import { getSections } from "./services/questionService";
 import { SectionPage } from "./components/SectionPage";
-import { useGetData } from "./hooks";
-import FetchComponent from "./components/FetchComponent/FetchComponent";
+import { useFetch } from "./hooks";
+import { FetchComponent } from "./components/FetchComponent";
+import { QuestionnaireProvider } from "./context/QuestionnaireContext";
 
 function App() {
-  const { data: sectionsData, loading, error } = useGetData(getSections);
+  const { data: sectionsData, loading, error } = useFetch(getSections);
 
   const [sectionId, setSectionId] = useState<number | undefined>(undefined);
   useEffect(() => {
@@ -15,6 +16,7 @@ function App() {
   }, [sectionsData]);
 
   return (
+    <QuestionnaireProvider>
     <div className="App">
       {
         <FetchComponent loading={loading} error={error}>
@@ -22,6 +24,7 @@ function App() {
         </FetchComponent>
       }
     </div>
+    </QuestionnaireProvider>
   );
 }
 

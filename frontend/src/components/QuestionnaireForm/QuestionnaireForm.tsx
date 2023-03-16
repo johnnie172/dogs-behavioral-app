@@ -3,6 +3,10 @@ import { Box, Button, Stack, Container } from "@mui/material";
 
 import { Question, Header } from "./";
 import { SectionData, Answer } from "sections";
+import { useFetch } from "../../hooks";
+import { postDogAnswers } from "../../services/questionService";
+import { useEffect } from "react";
+import { useQuestionnaireContext } from "../../context/QuestionnaireContext";
 
 const sortAnswers = (a: Answer, b: Answer) => {
   if (a.score === null) return -1;
@@ -10,10 +14,30 @@ const sortAnswers = (a: Answer, b: Answer) => {
   return a.score < b.score ? -1 : 1;
 };
 
-// interface ElementName {
-//   question_id: number;
-//   answer_id: number;
-// }
+const createAnswersBody = (
+  questionsIds: string[],
+  refObj: { [key: string]: number }
+) => {
+  const body = {
+    answers: questionsIds.map((key) => {
+      return { question_id: +key, answer_id: refObj[key] };
+    }),
+  };
+  return body;
+};
+
+const usePostAnswers = () => {
+  const { answers } = useQuestionnaireContext();
+  const { data, loading, error, setShouldFetch } = useFetch(
+    () => postDogAnswers(answers, 1, 1),
+    false
+  );
+  useEffect(() => {
+    if (answers.answers.length === 0) return;
+    setShouldFetch(true);
+  }, [answers]);
+  return { data, loading, error };
+};
 
 interface QuestionnaireFormProps {
   sectionData: SectionData;
@@ -21,30 +45,31 @@ interface QuestionnaireFormProps {
 }
 const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({
   sectionData,
-  children,
 }) => {
   const answersRef = useRef<{ [key: string]: number }>({});
+
+  const { setAnswers } = useQuestionnaireContext();
+  const { data } = usePostAnswers();
 
   //   get all questions and the amounts of questions
   const questions = sectionData?.questions;
   const questionsLen = Object.keys(questions).length;
 
-  //   //   get first question answers
+  //   get first question answers
   const firstQuestion = questions[Object.keys(questions)[0]];
 
-  //   //   sort answers by score
-  //   const sortedAnswers = firstQuestion?.answers.sort(sortAnswers);
-
+  //   handle submit function
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // create answers array for all the answers ids that were checked
-    // const answers: ElementName[] = Object.values(event?.target)
-    //   .filter((el) => el.value === "true")
-    //   .map((el) => JSON.parse(el.name));
-    console.log(questionsLen === Object.keys(answersRef?.current).length);
-    console.log(answersRef?.current);
+    // check if all the questions are answered
+    const questionsIds = Object.keys(answersRef?.current);
+    if (questionsLen !== questionsIds.length) return;
 
-    // TODO: send data
+    // create body for the request
+    const body = createAnswersBody(questionsIds, answersRef?.current);
+    setAnswers(body);
+
+    // TODO: add user and dog
   };
 
   return (
