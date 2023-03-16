@@ -71,7 +71,12 @@ def handle_user_answers(user_id: int, dog_id: int, dogAnswers: DogAnswers):
 
 
 def main():
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(name)s :: %(asctime)s %(levelname)s %(message)s",
+        datefmt="%d-%m-%Y %H:%M:%S",
+
+    )
     uvicorn.run(app)
 
 if __name__ == "__main__":

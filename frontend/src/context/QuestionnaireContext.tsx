@@ -1,30 +1,50 @@
 import { DogAnswers } from "answers";
 import { createContext, useState, useContext } from "react";
 
-
 export interface QuestionnaireContext {
-  answers: DogAnswers
-  // TODO: fix types
-  setAnswers: (answers: any) => void;
+  answers: DogAnswers;
+  sections: number[];
+  currentSection: number | undefined;
+  setAnswers: (answers: DogAnswers) => void;
+  setSections: (sections: number[]) => void;
+  setCurrentSection: (section: number) => void;
 }
 
 export const QuestionnaireContext = createContext<QuestionnaireContext>({
-  answers: {answers: []},
+  answers: { answers: [] },
+  sections: [],
+  currentSection: undefined,
   setAnswers: () => {},
+  setSections: () => {},
+  setCurrentSection: () => {},
 });
 
 interface QuestionnaireProviderProps {
   children?: React.ReactNode;
 }
 
-export const QuestionnaireProvider: React.FC<QuestionnaireProviderProps> = ({ children }) => {
-
-  const [questionnaireContext, setQuestionnaireContext] = useState({
+export const QuestionnaireProvider: React.FC<QuestionnaireProviderProps> = ({
+  children,
+}) => {
+  // TODO: useReducer
+  const [answers, setAnswers] = useState<QuestionnaireContext["answers"]>({
     answers: [],
   });
+  const [sections, setSections] = useState<QuestionnaireContext["sections"]>(
+    []
+  );
+  const [currentSection, setCurrentSection] =
+    useState<QuestionnaireContext["currentSection"]>();
   return (
     <QuestionnaireContext.Provider
-      value={{ answers: questionnaireContext, setAnswers: setQuestionnaireContext }}
+      value={{
+        answers: answers,
+        setAnswers: setAnswers,
+        sections: sections,
+        setSections: setSections,
+        currentSection: currentSection,
+        setCurrentSection: setCurrentSection,
+      }}
     >
       {children}
     </QuestionnaireContext.Provider>
@@ -35,46 +55,3 @@ export const useQuestionnaireContext = () => {
   const questionnaireContext = useContext(QuestionnaireContext);
   return { ...questionnaireContext };
 };
-
-
-
-
-
-// import { createContext, useState, useContext } from "react";
-// import { DogAnswers } from "answers";
-
-// export interface QuestionnaireContext {
-//   answers?: DogAnswers;
-//   setAnswers: (answers: DogAnswers) => void;
-// }
-
-// export const QuestionnaireContext = createContext<QuestionnaireContext>({
-//   answers: undefined,
-//   setAnswers: () => {},
-// });
-
-// interface QuestionnaireProviderProps {
-//   children?: React.ReactNode;
-// }
-
-// export const QuestionnaireProvider: React.FC<QuestionnaireProviderProps> = ({
-//   children,
-// }) => {
-//   const [questionnaireContext, setQuestionnaireContext] = useState<
-//     DogAnswers | undefined
-//   >();
-//   return (
-//     <QuestionnaireContext.Provider
-//       value={{
-//         answers: questionnaireContext,
-//         setAnswers: setQuestionnaireContext,
-//       }}
-//     >
-//       {children}
-//     </QuestionnaireContext.Provider>
-//   );
-// };
-// export const useQuestionnaireContext = () => {
-//   const questionnaireContext = useContext(QuestionnaireContext);
-//   return { ...questionnaireContext };
-// };
