@@ -71,13 +71,16 @@ def handle_user_answers(user_id: int, dog_id: int, dogAnswers: DogAnswers):
 
 
 def main():
-    logging.basicConfig(
+    logger = logging.basicConfig(
         level=logging.INFO,
         format="%(name)s :: %(asctime)s %(levelname)s %(message)s",
         datefmt="%d-%m-%Y %H:%M:%S",
-
+        handlers=[
+        logging.FileHandler("debug.log"),
+        logging.StreamHandler()
+    ]
     )
-    uvicorn.run(app)
+    uvicorn.run(app, log_config=logger)
 
 if __name__ == "__main__":
     main()
