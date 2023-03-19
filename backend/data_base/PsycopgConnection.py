@@ -59,10 +59,12 @@ class PsycopgConnection:
         try:
             logging.info("using cursor")
             yield self.connection.cursor()
-        except:
+
+        except Exception as e:
             logging.info("preforming rollback")
+            logging.warn(f"exception {e}")
             self.connection.rollback()
-            raise
+            raise e
         finally:
             logging.info("commit cursor")
             self.connection.commit()
