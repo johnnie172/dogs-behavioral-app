@@ -60,15 +60,20 @@ class PsycopgConnection:
             logging.info("using cursor")
             yield self.connection.cursor()
 
+        # handling closed connection
+        except psycopg2.InterfaceError as e:
+            logging.info("reconnecting")
+            logging.warn(f"exception {e}")
+            self._connection = self._connect()
+
+        # preforming rollback in case of exception
         except Exception as e:
             logging.info("preforming rollback")
-            logging.warn(f"exception {e}")
             self.connection.rollback()
             raise e
         finally:
             logging.info("commit cursor")
             self.connection.commit()
-            # conn.close()
 
     # @contextmanager
     # def get_dict_cursor(self) -> Generator[RealDictCursor, None, None]:
