@@ -53,6 +53,11 @@ class PsycopgConnection:
         logging.info("connecting to db")
         return psycopg2.connect(**self.connections_params)
 
+    def _close(self) -> None:
+        if self.connection and self.connection.closed != 0:
+            logging.info("closing connection")
+            self.connection.close()
+
     @contextmanager
     def get_cursor(self) -> Generator[psycopg2.extensions.cursor, None, None]:
         """Connecting to database and getting cursor"""
@@ -60,15 +65,17 @@ class PsycopgConnection:
             logging.info("using cursor")
             yield self.connection.cursor()
 
-        # handling closed connection
+        # handling InterfaceError by resetting connection
         except psycopg2.InterfaceError as e:
-            logging.info("reconnecting")
-            logging.warn(f"exception {e}")
-            self._connection = self._connect()
+            logging.error(e, exc_info=True)
+            self._close()
+            logging.info("init _connection")
+            self._connection = None
 
         # preforming rollback in case of exception
         except Exception as e:
             logging.info("preforming rollback")
+            logging.error(e, exc_info=True)
             self.connection.rollback()
             raise e
         finally:
