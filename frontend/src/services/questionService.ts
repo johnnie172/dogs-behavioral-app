@@ -17,7 +17,7 @@ export const postDogAnswers = async (
   dog_id: number
 ) => {
   const reqConfig = { data: dogAnswers };
-  return await post<{"message": string}| undefined>(
+  return await post<{ message: string } | undefined>(
     `${BASE_URL}/answers/${user_id}/${dog_id}`,
     reqConfig
   );

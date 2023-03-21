@@ -47,7 +47,7 @@ def root():
 
 
 @app.get("/sections", status_code=200)
-def get_sections(response: Response):
+async def get_sections(response: Response):
     """Get all sections from the database"""
     sections = db_connector.get_sections_ids()
     if not len(sections):
@@ -56,7 +56,7 @@ def get_sections(response: Response):
 
 
 @app.get("/section/{section_id}")
-def get_section(section_id: int):
+async def get_section(section_id: int):
     """Get a section by section id from database"""
     section_with_questions = db_connector.get_section_questions_with_answers(
         section_id)
@@ -64,10 +64,11 @@ def get_section(section_id: int):
 
 # TODO: needs to check if the dog owner is the user that sent the request
 @app.post("/answers/{user_id}/{dog_id}", status_code=201)
-def handle_user_answers(user_id: int, dog_id: int, dogAnswers: DogAnswers):
+async def handle_user_answers(user_id: int, dog_id: int, dogAnswers: DogAnswers):
     req = dogAnswers.dict()
-    db_connector.put_dogs_answers(dog_id, req.get("answers", []))
-    return {"message": "answers inserted"}
+    questions_ids = db_connector.put_dogs_answers(dog_id, req.get("answers", []))
+    if questions_ids:
+        return {"message": "answers inserted", "questions": questions_ids}
 
 
 def main():

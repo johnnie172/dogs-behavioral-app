@@ -50,7 +50,7 @@ const useFetch = <T extends unknown>(
       //   clear retry timer
       clearTimeout(timer);
     };
-  }, [toRetry, shouldFetch]);
+  }, [toRetry, shouldFetch, fetchFunc]);
 
   return { data, loading, error, setShouldFetch };
 };

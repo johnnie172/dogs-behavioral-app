@@ -167,12 +167,14 @@ class DBToApi:
         """Handle the client answers from api to sql"""
         # set empty list for answers
         answers_to_sql = []
+        questions_ids = []
 
         # iterate over answers list
         for answer in answers:
 
             # create answer for db
             question_id = answer.get("question_id")
+            questions_ids.append(question_id)
             answer_id = answer.get("answer_id")
 
             # add the answer to the list
@@ -182,7 +184,7 @@ class DBToApi:
 
         # execute all the answers throw psycopg
         self.psyco.execute_commands(answers_to_sql)
-
+        return questions_ids
 
 def test():
     db = DBToApi()

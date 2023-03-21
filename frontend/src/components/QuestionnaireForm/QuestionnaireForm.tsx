@@ -1,12 +1,13 @@
 import React, { useRef } from "react";
 import { Box, Button, Stack, Container } from "@mui/material";
-
+import { QuestionnaireFormBtns } from "./";
 import { Question, Header } from "./";
 import { SectionData, Answer } from "sections";
 import { useFetch } from "../../hooks";
 import { postDogAnswers } from "../../services/questionService";
 import { useEffect } from "react";
 import { useQuestionnaireContext } from "../../context/QuestionnaireContext";
+import { useCallback } from "react";
 
 const sortAnswers = (a: Answer, b: Answer) => {
   if (a.score === null) return -1;
@@ -27,15 +28,19 @@ const createAnswersBody = (
 };
 
 const usePostAnswers = () => {
-  const { answers } = useQuestionnaireContext();
-  const { data, loading, error, setShouldFetch } = useFetch(
-    () => postDogAnswers(answers, 1, 1),
-    false
-  );
+  const { answers, setAnswers } = useQuestionnaireContext();
+  const fetchFunc = useCallback(() => postDogAnswers(answers, 1, 1), [answers]);
+  const { data, loading, error, setShouldFetch } = useFetch(fetchFunc, false);
   useEffect(() => {
+    if (data?.message === "answers inserted") {
+      // TODO: work on this to set multiple sections
+      setShouldFetch(false);
+      setAnswers({ answers: [] });
+    }
+
     if (answers.answers.length === 0) return;
     setShouldFetch(true);
-  }, [answers]);
+  }, [answers, data]);
   return { data, loading, error };
 };
 
@@ -106,15 +111,7 @@ const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({
           })}
 
           {/* form bottom section (submit/next/prev)  */}
-          <Stack width="100%">
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{ mt: 3, mb: 2, mr: "auto" }}
-            >
-              המשך
-            </Button>
-          </Stack>
+          <QuestionnaireFormBtns></QuestionnaireFormBtns>
         </Box>
       </Box>
     </Container>

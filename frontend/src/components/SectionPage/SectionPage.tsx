@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Box, Container } from "@mui/material";
 import { SectionDetails } from "./";
 import { QuestionnaireForm } from "../QuestionnaireForm";
@@ -11,7 +11,8 @@ interface SectionPageProps {
 }
 
 const SectionPage: React.FC<SectionPageProps> = ({ sectionId }) => {
-  const { data, loading, error } = useFetch(() => getSectionById(sectionId));
+  const fetchFunc = useCallback(() => getSectionById(sectionId), [sectionId]);
+  const { data, loading, error } = useFetch(fetchFunc);
   return (
     <Box sx={{ width: "100%", height: "100%" }}>
       <FetchComponent loading={loading} error={error}>

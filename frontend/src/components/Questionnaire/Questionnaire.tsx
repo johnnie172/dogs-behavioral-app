@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { getSections } from "../../services/questionService";
 import { SectionPage } from "../../components/SectionPage";
 import { useFetch } from "../../hooks";
@@ -13,11 +13,15 @@ const Questionnaire = () => {
 
   useEffect(() => {
     sectionsData?.sections && setSections(sectionsData?.sections);
-    sections && setCurrentSection(sections[0]);
-  }, [sectionsData, sections, currentSection]);
+  }, [sectionsData, sections]);
+
+  const onStartClick = () => {
+    sections?.length && setCurrentSection(sections[0]);
+  };
 
   return (
     <Box sx={{ width: "inherit", height: "inherit" }}>
+      {!currentSection && <Button onClick={onStartClick}>התחל</Button>}
       <FetchComponent loading={loading} error={error}>
         {currentSection && (
           <SectionPage sectionId={currentSection}></SectionPage>
