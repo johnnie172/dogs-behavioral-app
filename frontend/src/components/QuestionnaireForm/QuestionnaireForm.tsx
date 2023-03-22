@@ -32,12 +32,14 @@ const usePostAnswers = () => {
   const fetchFunc = useCallback(() => postDogAnswers(answers, 1, 1), [answers]);
   const { data, loading, error, setShouldFetch } = useFetch(fetchFunc, false);
   useEffect(() => {
+    // clear answers if answers inserted
     if (data?.message === "answers inserted") {
       // TODO: work on this to set multiple sections
       setShouldFetch(false);
       setAnswers({ answers: [] });
     }
 
+    // post new answers if there are any
     if (answers.answers.length === 0) return;
     setShouldFetch(true);
   }, [answers, data]);
@@ -54,7 +56,7 @@ const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({
   const answersRef = useRef<{ [key: string]: number }>({});
 
   const { setAnswers } = useQuestionnaireContext();
-  const { data } = usePostAnswers();
+  usePostAnswers();
 
   //   get all questions and the amounts of questions
   const questions = sectionData?.questions;
@@ -73,6 +75,9 @@ const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({
     // create body for the request
     const body = createAnswersBody(questionsIds, answersRef?.current);
     setAnswers(body);
+
+    // clear answerRef
+    answersRef.current = {};
 
     // TODO: add user and dog
   };
@@ -111,7 +116,7 @@ const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({
           })}
 
           {/* form bottom section (submit/next/prev)  */}
-          <QuestionnaireFormBtns></QuestionnaireFormBtns>
+          <QuestionnaireFormBtns />
         </Box>
       </Box>
     </Container>

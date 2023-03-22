@@ -1,13 +1,15 @@
 import { DogAnswers } from "answers";
 import { createContext, useState, useContext } from "react";
 
+type Sections = number[];
+type CurrentSection = number | undefined;
 export interface QuestionnaireContext {
   answers: DogAnswers;
-  sections: number[];
-  currentSection: number | undefined;
+  sections: Sections;
+  currentSection: CurrentSection;
   setAnswers: (answers: DogAnswers) => void;
-  setSections: (sections: number[]) => void;
-  setCurrentSection: (section: number) => void;
+  setSections: (sections: Sections) => void;
+  setCurrentSection: (section: CurrentSection) => void;
 }
 
 export const QuestionnaireContext = createContext<QuestionnaireContext>({

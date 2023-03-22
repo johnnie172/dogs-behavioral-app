@@ -165,7 +165,7 @@ class DBToApi:
 
     def put_dogs_answers(self, dog_id: int, answers: list[dict]) -> None:
         """Handle the client answers from api to sql"""
-        # set empty list for answers
+        # set empty lists for answers and questions
         answers_to_sql = []
         questions_ids = []
 
@@ -174,17 +174,17 @@ class DBToApi:
 
             # create answer for db
             question_id = answer.get("question_id")
-            questions_ids.append(question_id)
             answer_id = answer.get("answer_id")
 
-            # add the answer to the list
-            dog_answer = self.create_dog_answer(
-                dog_id, question_id, answer_id)
-            answers_to_sql.append(dog_answer)
+            # add the answer and question to the lists
+            answers_to_sql.append(self.create_dog_answer(
+                dog_id, question_id, answer_id))
+            questions_ids.append(question_id)
 
-        # execute all the answers throw psycopg
+        # execute all the answers via psycopg
         self.psyco.execute_commands(answers_to_sql)
         return questions_ids
+
 
 def test():
     db = DBToApi()

@@ -6,7 +6,7 @@ interface AnswerProps {
   size: string;
 }
 const AnswerTypography: React.FC<AnswerProps> = ({ text, size }) => (
-  <Typography textAlign="center" sx={{ width: size }}>
+  <Typography textAlign="center" sx={{ width: size, wordWrap: "break-word" }}>
     {text}
   </Typography>
 );
