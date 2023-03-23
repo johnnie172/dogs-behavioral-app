@@ -1,24 +1,24 @@
-import { Stack, Button, ButtonBaseProps } from "@mui/material";
+import { Stack, Button, ButtonProps } from "@mui/material";
 import { useQuestionnaireContext } from "../../context/QuestionnaireContext";
 
-const LeftBtn: React.FC<ButtonBaseProps> = ({ children, onClick }) => (
+const LeftBtn: React.FC<ButtonProps> = ({  ...props }) => (
   <Button
     variant="contained"
     sx={{ mt: 3, mb: 2, mr: "auto" }}
-    onClick={onClick}
     type="submit"
+    {...props}
   >
-    {children}{" "}
+    {props?.children}{" "}
   </Button>
 );
-const RightBtn: React.FC<ButtonBaseProps> = ({ children, onClick }) => (
+const RightBtn: React.FC<ButtonProps> = ({ ...props }) => (
   <Button
     variant="contained"
     sx={{ mt: 3, mb: 2, ml: "auto" }}
-    onClick={onClick}
     color="warning"
+    {...props}
   >
-    {children}{" "}
+    {props?.children}{" "}
   </Button>
 );
 
