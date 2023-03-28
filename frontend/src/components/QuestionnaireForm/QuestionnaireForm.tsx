@@ -1,5 +1,5 @@
-import React, { useRef } from "react";
-import { Box, Button, Stack, Container } from "@mui/material";
+import React, { useRef, useCallback } from "react";
+import { Box, Container } from "@mui/material";
 import { QuestionnaireFormBtns } from "./";
 import { Question, Header } from "./";
 import { SectionData, Answer } from "sections";
@@ -7,7 +7,7 @@ import { useFetch } from "../../hooks";
 import { postDogAnswers } from "../../services/questionService";
 import { useEffect } from "react";
 import { useQuestionnaireContext } from "../../context/QuestionnaireContext";
-import { useCallback } from "react";
+import { useAppContext } from "../../context/AppContext";
 
 const sortAnswers = (a: Answer, b: Answer) => {
   if (a.score === null) return -1;
@@ -28,6 +28,8 @@ const createAnswersBody = (
 };
 
 const usePostAnswers = () => {
+  const { alertsDispatch } = useAppContext();
+
   const { answers, setAnswers } = useQuestionnaireContext();
   const fetchFunc = useCallback(() => postDogAnswers(answers, 1, 1), [answers]);
   const { data, loading, error, setShouldFetch } = useFetch(fetchFunc, false);
@@ -37,6 +39,10 @@ const usePostAnswers = () => {
       // TODO: work on this to set multiple sections
       setShouldFetch(false);
       setAnswers({ answers: [] });
+      alertsDispatch({
+        type: "ADD",
+        payload: { severity: "success", message: "התשובות הוזנו בהצלחה" },
+      });
     }
 
     // post new answers if there are any

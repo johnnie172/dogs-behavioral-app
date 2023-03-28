@@ -9,6 +9,8 @@ import { QuestionnaireProvider } from "./context/QuestionnaireContext";
 import { Questionnaire } from "./components/Questionnaire";
 import { AppBar } from "./components/AppBar";
 import { useLocalStorage } from "./hooks";
+import { Alerts } from "./components/Alerts";
+import { AppContextProvider } from "./context/AppContext";
 
 const home_paths = ["home", "/"];
 
@@ -31,23 +33,26 @@ function App() {
 
   return (
     <ThemeProvider theme={currentTheme}>
-      <CssBaseline />
-      <div className="App">
-        <AppBar></AppBar>
-        <Routes>
-          {home_paths.map((path) => (
-            <Route
-              key={path}
-              path={path}
-              element={
-                <QuestionnaireProvider>
-                  <Questionnaire />
-                </QuestionnaireProvider>
-              }
-            ></Route>
-          ))}
-        </Routes>
-      </div>
+      <AppContextProvider>
+        <CssBaseline />
+        <div className="App">
+          <AppBar></AppBar>
+          <Alerts />
+          <Routes>
+            {home_paths.map((path) => (
+              <Route
+                key={path}
+                path={path}
+                element={
+                  <QuestionnaireProvider>
+                    <Questionnaire />
+                  </QuestionnaireProvider>
+                }
+              ></Route>
+            ))}
+          </Routes>
+        </div>
+      </AppContextProvider>
     </ThemeProvider>
   );
 }
