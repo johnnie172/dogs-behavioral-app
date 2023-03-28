@@ -15,8 +15,8 @@ type Action =
   | { type: "POP" }
   | { type: "CLEAR" };
 
-function isMessageExist(state: State, msg: string): boolean {
-    // check if the msg already exists in alerts
+function isMessageExist(state: State, msg: string) {
+  // check if the msg already exists in alerts
   return state.find((alert) => alert.message === msg) ? true : false;
 }
 
