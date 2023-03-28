@@ -47,11 +47,7 @@ export const AppContext = createContext<AppReducer>({} as AppReducer);
 export const AppContextProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [alerts, alertsDispatch] = useReducer(alertsReducer, [{
-    message: "test",
-    severity: "warning",
-    closeText: "sdjas"
-  }]);
+  const [alerts, alertsDispatch] = useReducer(alertsReducer, []);
 
   return (
     <AppContext.Provider value={{ alerts, alertsDispatch }}>
